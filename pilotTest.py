@@ -1,4 +1,7 @@
 import time
+import os
+from dotenv import load_dotenv
+load_dotenv()
 import json
 import requests
 from requests_oauthlib import OAuth2Session
@@ -93,9 +96,9 @@ def savetoDB(name, mal_id):
 token_URL = "https://myanimelist.net/v1/oauth2/token"
 auth = "https://myanimelist.net/v1/oauth2/authorize"
 d = {
-"client_ID" :"5ed6f64ade975b77fa19985535dbdbef",
-"client_secret" :"16266e61ff56020105aeed4fd0495da536531178174be81f73801e6fbaac5f3d",
-"code_verifier" :"pyxhKiP-7tjjaDaP97at1iFmxjzCdaDJ7oTM7SSMM87496A8rxCbMyAr-HDX544WyaA9HGim0kYTwDWcjDXXXWaYrzUsXTa6uWyHR3AeQ1sngTEDQfBo0l-ZCWN-oSJ_",
+"client_ID" :str(os.environ.get("client_id")),
+"client_secret" :str(os.environ.get("client_secret")),
+"code_verifier" :str(os.environ.get("code_verifier")),
 "grant_type" :"authorization_code"
 }
 oauth = OAuth2Session(d["client_ID"])
