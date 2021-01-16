@@ -17,7 +17,7 @@
 
 # 1.1 How to use:
 - Get [Python](https://www.python.org/),
-- Install the dependencies(refer to `1.12` for a list of dependencies),
+- Install the dependencies(refer to [`1.12`](https://github.com/FadedJayden/AP_MALPorter#112-dependencies) for a list of dependencies),
 - Create a new folder, <-- this is where all the files go into.
 - In it, put in your [exported list](https://www.anime-planet.com/users/export_list.php) from AnimePlanet and change the file name to *APList*
 - Also put in the **.py** file in it, <-- code
@@ -39,5 +39,5 @@
 **Error: 33**,
 	Failed to copy the OAuth2 link sent by program to clipboard, not a fatal warning.\
 **Status code 404**,
-	Access to MyAnimeList's API is forbidden, highly caused by API token credentials, notify me if this error pops out.
+	Access to MyAnimeList's API is forbidden, highly caused by invalid API token credentials, notify me if this error pops out.
 ###### I would be glad to assist you throughout your journey of importing your list over to MAL, hmu at FadedJayden#7171
