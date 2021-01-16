@@ -109,7 +109,7 @@ authorization_url, state = oauth.authorization_url(
 try:
 	pyperclip.copy(authorization_url)
 except:
-	print("Couldn't copy link.")
+	print("Couldn't copy link, exit with error code: 31")
 
 borderOutput = "============================\n"
 print(f'Please go to\n{borderOutput}{authorization_url}\n{borderOutput}and authorize access.(Link was copied to your clipboard, Ctrl V)\n')

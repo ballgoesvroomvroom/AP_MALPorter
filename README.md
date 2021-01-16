@@ -36,5 +36,6 @@
 - [Pyperclip](https://pypi.org/project/pyperclip/)
 
 # 1.3 Known Errors:
-### No known errors hence far.
+**Error: 33**,
+	Failed to copy the OAuth2 link sent by program to clipboard, not a fatal warning.
 ###### I would be glad to assist you throughout your journey of importing your list over to MAL, hmu at FadedJyaden#7171
