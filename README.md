@@ -23,7 +23,7 @@
 - Also put in the **.py** file in it, <-- code
 - Run the Python code and do as prompted,
 - Executor will spit you back a link which you allow you to authorise access to your MyAnimeList account, <-- link may be copied to your clipboard, just `Ctrl + V`)
-- ![Screenshot of perms authorisation page.](https://cdn.discordapp.com/attachments/782294527661965352/799989880825708544/XWjQABAgQIECAQIiDkhTBrQoAAAQIECBCIFRDyYr11I0CAAAECBAiECAh5IcyaECBAgAABAgRiBYS8G72blNIsdhq6ESBAgAABAg.png)
+![Screenshot of perms authorisation page.](https://cdn.discordapp.com/attachments/782294527661965352/799989880825708544/XWjQABAgQIECAQIiDkhTBrQoAAAQIECBCIFRDyYr11I0CAAAECBAiECAh5IcyaECBAgAABAgRiBYS8G72blNIsdhq6ESBAgAABAg.png)
 - Once allowed, wait for the page to fully load in, after that, copy the full link and paste it into the executor(the area where you ran the code and received the authorisation link),
 - When prompted to ask for the item to jump to, hit 0 else if you have interrupted your previous run, type in the index number that the code has ran until(the number can be found by searching for the index printed),
 - During the process, human input may be needed,
@@ -38,4 +38,6 @@
 # 1.3 Known Errors:
 **Error: 33**,
 	Failed to copy the OAuth2 link sent by program to clipboard, not a fatal warning.
-###### I would be glad to assist you throughout your journey of importing your list over to MAL, hmu at FadedJyaden#7171
+**Status code 404**,
+	Access to MyAnimeList's API is forbidden, highly caused by API token credentials, notify me if this error pops out.
+###### I would be glad to assist you throughout your journey of importing your list over to MAL, hmu at FadedJayden#7171
