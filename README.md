@@ -37,6 +37,7 @@
 
 # 1.3 Known Errors:
 **Error: 33**,
-	Failed to copy the OAuth2 link sent by program to clipboard, not a fatal warning.  **Status code 404**,
+	Failed to copy the OAuth2 link sent by program to clipboard, not a fatal warning.\
+**Status code 404**,
 	Access to MyAnimeList's API is forbidden, highly caused by API token credentials, notify me if this error pops out.
 ###### I would be glad to assist you throughout your journey of importing your list over to MAL, hmu at FadedJayden#7171
