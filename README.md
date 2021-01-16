@@ -18,7 +18,7 @@
 - To successfully import your list to MyAnimeList, type in `y` after everything has been completed.
 
 # 1.12 Dependencies:
-### Here are a list of modules you need to install,**
+**Here are a list of modules you need to install,**
 - [requests](https://pypi.org/project/requests/)
 - [requests_oauthlib](https://pypi.org/project/requests-oauthlib/)
 - [Pyperclip](https://pypi.org/project/pyperclip/)
