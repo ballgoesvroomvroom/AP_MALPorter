@@ -23,7 +23,7 @@
 - Also put in the **.py** file in it, <-- code
 - Run the Python code and do as prompted,
 - Executor will spit you back a link which you allow you to authorise access to your MyAnimeList account, <-- link may be copied to your clipboard, just `Ctrl + V`)
-- ![Screenshot of perms authorisation page.](https://prnt.sc/wu6i5h)
+- ![Screenshot of perms authorisation page.](https://cdn.discordapp.com/attachments/782294527661965352/799989880825708544/XWjQABAgQIECAQIiDkhTBrQoAAAQIECBCIFRDyYr11I0CAAAECBAiECAh5IcyaECBAgAABAgRiBYS8G72blNIsdhq6ESBAgAABAg.png)
 - Once allowed, wait for the page to fully load in, after that, copy the full link and paste it into the executor(the area where you ran the code and received the authorisation link),
 - When prompted to ask for the item to jump to, hit 0 else if you have interrupted your previous run, type in the index number that the code has ran until(the number can be found by searching for the index printed),
 - During the process, human input may be needed,
