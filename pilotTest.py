@@ -6,8 +6,6 @@ import json
 import requests
 from requests_oauthlib import OAuth2Session
 import pyperclip
-from mal import AnimeSearch
-from mal import Anime
 
 defaultOutputKey = {"entries": []}
 database = "database.json"
@@ -108,7 +106,10 @@ authorization_url, state = oauth.authorization_url(
         code_challenge=d["code_verifier"],
         responsetype="code",
         state="RequestID42")
-pyperclip.copy(authorization_url)
+try:
+	pyperclip.copy(authorization_url)
+except:
+	print("Couldn't copy link.")
 
 borderOutput = "============================\n"
 print(f'Please go to\n{borderOutput}{authorization_url}\n{borderOutput}and authorize access.(Link was copied to your clipboard, Ctrl V)\n')
