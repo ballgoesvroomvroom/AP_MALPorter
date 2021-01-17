@@ -2,6 +2,7 @@
 
 # 1.0 What's this used for?
 - Mainly used to import your anime list from [AnimePlanet](https://www.anime-planet.com/) to [MyAnimeList](https://myanimelist.net/).
+- You will need the exported `.JSON` list from AnimePlanet.
 - Do note that human intervention is needed when the application fails to find the referenced anime.
 - Though, newly added anime would be added to a database for easy reference later on.
 - Uses [MyAnimeList's API](https://myanimelist.net/apiconfig/references/api/v2) to add/update and search anime.
