@@ -24,11 +24,27 @@ def clearFiles():
 animeList = {}
 with open(listSample, "r") as f:
     animeList = json.load(f)
+   
+replace_char = {
+	".": "_0_",
+	"$": "_1_",
+	"#": "_2_",
+	"[": "_3_",
+	"]": "_4_",
+	"/": "_5_"
+}
+def parsename(name): ## formats the name to store and use in database
+	for keys in replace_char:
+		name = name.replace(keys, replace_char[keys])
+	return name
 
+## getting the database with all the previous successfully indexed anime
+## stores the mal_id for the corresponding anime, indexed using anime's AP name along with some parsing
 animeID_DB = {}
 with open(database, "r") as f:
 	animeID_DB = json.load(f)
 
+##
 totalAnimeToMigrate = len(animeList["entries"])
 AnimesSuccessfullyMigrated = 0
 
@@ -80,16 +96,16 @@ def addtolist(x):
 
 def savetoDB(name, mal_id):
 	currList = {}
+	name_DBFormat = parsename(name)
+
 	with open(database, "r") as f:
 		currList = json.load(f)
 
-	currList[name] = mal_id
+	currList[name_DBFormat] = mal_id
 	with open(database, "w") as f:
 		json.dump(currList, f)
 
-	print(f"{name} to database as key to the value, {mal_id}")
-
-
+	print(f"{name}; parsed to || {name_DBFormat} ||; saved to database as key to the value, {mal_id}")
 
 token_URL = "https://myanimelist.net/v1/oauth2/token"
 auth = "https://myanimelist.net/v1/oauth2/authorize"
@@ -106,10 +122,7 @@ authorization_url, state = oauth.authorization_url(
         code_challenge=d["code_verifier"],
         responsetype="code",
         state="RequestID42")
-try:
-	pyperclip.copy(authorization_url)
-except:
-	print("Couldn't copy link, exit with error code: 31")
+pyperclip.copy(authorization_url)
 
 borderOutput = "============================\n"
 print(f'Please go to\n{borderOutput}{authorization_url}\n{borderOutput}and authorize access.(Link was copied to your clipboard, Ctrl V)\n')
@@ -154,13 +167,14 @@ for keyIndexAP, AP_Data in enumerate(animeList["entries"]):
 	## Checking if status was able to migrate successfully ##
 	if error:
 		print("NO CODE FOUND; Gave Code 'dropped'.")
-		time.sleep(5)
+		time.sleep(2)
 	##################################
 	validSearchReturned = False
 	existInDB = False
 	## Try seeking for the mal_id using name on AnimePlanet ##
 	try:
-		mal_id = animeID_DB[animeName_AP]
+		animeName_AP_DBFormat = parsename(animeName_AP)
+		mal_id = animeID_DB[animeName_AP_DBFormat]
 		existInDB = True
 
 		print("Found matching name keys in database, using logged mal_id")
