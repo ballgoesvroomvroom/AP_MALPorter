@@ -6,6 +6,7 @@
 - Do note that human intervention is needed when the application fails to find the referenced anime.
 - Though, newly added anime would be added to a database for easy reference later on.
 - Uses [MyAnimeList's API](https://myanimelist.net/apiconfig/references/api/v2) to add/update and search anime.
+- Currently does not support ratings import etc. Only imports anime and slot them into the correct list(watching, watched, plan to watch..).
 
 # 1.01 How does it work?
 - Uses the exported list provided by user.
