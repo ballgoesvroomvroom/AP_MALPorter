@@ -6,9 +6,12 @@
 - Do note that human intervention is needed when the application fails to find the referenced anime.
 - Though, newly added anime would be added to a database for easy reference later on.
 - Uses [MyAnimeList's API](https://myanimelist.net/apiconfig/references/api/v2) to add/update and search anime.
+
+# 1.01 Note:
+- Puts anime with the `Won't Watch` tag into `Dropped` with no progress when porting over to MAL since MAL does not have a `Won't Watch` tag.
 - Currently does not support ratings import etc. Only imports anime and slots them into the correct list(watching, watched, plan to watch..).
 
-# 1.01 How does it work?
+# 1.02 How does it work?
 - Uses the exported list provided by user.
 - Loops through list and tries to automatically find the matching anime on MyAnimeList(both sites might have name discrepancies for the same anime).
 - If it finds none matching, you would be given a list which contains up to 20 anime ranking from the most relevance, input the number to select.
