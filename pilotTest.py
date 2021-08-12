@@ -148,11 +148,14 @@ startingJumpInput = 0
 while True:
 	try:
 		startingJumpInput = int(input("jump break; input 0 to start from the beginning.\n"))
-		if startingJumpInput < 0: raise ValueError
-		elif startingJumpInput >= totalAnimeToMigrate: raise ValueError
+		if startingJumpInput < 0: raise IndexError
+		elif startingJumpInput >= totalAnimeToMigrate: raise IndexError
 		break
 	except ValueError:
 		print("Err: Input can only be an integer, within given range and is not negative.\n")
+		continue
+	except IndexError:
+		print("Err: Invalid input; either negative or more than the length of list.\n")
 		continue
 
 if startingJumpInput == 0: clearFiles()
