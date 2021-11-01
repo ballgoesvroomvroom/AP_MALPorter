@@ -40,7 +40,7 @@
 - [requests_oauthlib](https://pypi.org/project/requests-oauthlib/)
 - [Pyperclip](https://pypi.org/project/pyperclip/)
 
-# 1.3 Known Errors:
+# 1.3 Error code:
 **Error: 33**,
 	Failed to copy the OAuth2 link sent by program to clipboard, not a fatal warning.\
 **Status code 404**,
