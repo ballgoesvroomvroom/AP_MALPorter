@@ -1,9 +1,18 @@
 ## handler for myanimelist's api
 
+## for generating of code_verifier
 import base64
 import os
 import re
+
+## main module
 import requests
+
+## for secrets
+import dotenv
+dotenv.load_dotenv()
+
+## for reading/writing json file into cache
 import json
 
 """
@@ -14,14 +23,11 @@ mal_id is 10087
 
 class const():
 	INIT = False
-	
-	CLIENT_ID = -1
-	CLIENT_SECRET = -1
 
 	STATE = "amistillintact"
 
 	API_BASE = "https://api.myanimelist.net/v2/"
-	QUERYFIELD = "fields=id,title,main_picture,alternative_titles,media_type,num_episodes"
+	QUERYFIELD = "&fields=id,title,main_picture,alternative_titles,media_type,num_episodes"
 	SEARCHQUERYFIELD = "anime?q={}&limit=20&nsfw=true"
 
 	BASE_URL = "https://myanimelist.net/v1/"
@@ -38,13 +44,14 @@ o_repr = {
 	"have_not_init": "Have not initialised mal_interactor; call mal_interactor.authenticate(username, pw); custom_errorcode_403 (forbidden)",
 	"already init": "authenticate() was called more than once",
 	"missing cache file auth_params": "Missing cache file (auth_params.json) inside cache/",
+	"empty params file": "auth_params.json is empty, write \"{}\" into it",
 	"missing client_id": "Missing CLIENT_ID field in .env file",
 	"missing client_secret": "Missing CLIENT_SECRET field in .env file",
 	"missing client_secret": "Missing CLIENT_SECRET field in .env file",
 	"error getting token": "Error trying to parse token and state string into respective variables",
 	"missmatched state": "Returned state is not the same as sent state",
 	"error authenticating": "Error authenicating with token; failed to get access token",
-	"error refresh_token": "Error refreshing access token"
+	"error refresh_token": "Error refreshing access token",
 	"error code returned": "Error raised when interacting with MAL API"
 }
 
@@ -115,9 +122,24 @@ def get_codechallenge(code_verifier):
 	## since only plain codechallenge method is available
 	return code_verifier
 
+def read_env():
+	## gets client_id and client_secret from .env files
+	client_id = os.getenv("CLIENT_ID")
+	if client_id == None:
+		raise MAL_Error("missing client_id")
+
+	client_secret = os.getenv("CLIENT_SECRET")
+	if client_secret == None:
+		raise MAL_Error("missing client_secret")
+
+	return client_id, client_secret
+
 def refresh_accesstoken(refresh_token):
+	client_id, client_secret = read_env()
 	d = {
 		"grant_type": "refresh_token",
+		"client_id": client_id,
+		"client_secret": client_secret,
 		"refresh_token": refresh_token
 	}
 
@@ -129,32 +151,43 @@ def refresh_accesstoken(refresh_token):
 
 		## overwrite cache file
 		with open(const.AUTH_PARAMS, "w") as f:
-			json.dump(f, returnobj)
+			json.dump(re, f)
 
 	return re
 
 def authenticate():
 	if const.INIT: raise MAL_Error("already init")
 	print("Beginning the process of authorisation.")
+
 	## check for existing refresh token
 	try:
 		with open(const.AUTH_PARAMS, "r") as f:
-			d = json.load(f)
-
+			try:
+				d = json.load(f)
+			except json.decoder.JSONDecodeError:
+				raise MAL_Error("empty params file")
 		if "refresh_token" in d:
+			print("refresh_token key found in cache folder.")
+			print("Attempting to refresh access token...")
 			returnobj = refresh_accesstoken(d["refresh_token"])
 			## returns .json() object from requests.post()
 
 			if "error" in returnobj:
 				## just authenticate again
+				print("Failed to refresh access token")
+				print("Proceeding to authorise again.")
 				pass
 
 			else:
+				print("Managed to refresh token using refresh_token stored in cache.")
+				print("Finish authorising")
 				return
 				
-	except:
+	except FileNotFoundError:
 		raise MAL_Error("missing cache file auth_params")
-		
+	##
+
+	## user's authorisation needed
 	order_of_append = [
 		"response_type",
 		"client_id",
@@ -164,17 +197,7 @@ def authenticate():
 	]
 	params = {}
 	
-	client_id = os.getenv("CLIENT_ID")
-	if client_id == None:
-		raise MAL_Error("missing client_id")
-	else:
-		params["client_id"] = client_id
-
-	client_secret = os.getenv("CLIENT_SECRET")
-	if client_secret == None:
-		raise MAL_Error("missing client_secret")
-	else:
-		params["client_secret"] = client_secret
+	params["client_id"], params["client_secret"] = read_env()
 	
 	params["response_type"] = "code"
 	params["state"] = const.STATE
@@ -225,7 +248,7 @@ def authenticate():
 	with open(const.AUTH_PARAMS, "w") as f:
 		json.dump(re2, f)
 
-	print("Finish authenicating")
+	print("Finish authorising")
 	obj.update_accesstoken(re2["access_token"])
 	const.INIT = True
 	return
@@ -237,7 +260,7 @@ def searchforanime(anime_name):
 	returns an array of possible matching animes in myanimelist's database
 	"""
 	anime_name = parsename(anime_name) ## make name url friendly
-	re = obj.session.get(const.API_BASE +const.SEARCHQUERYFIELD.format(anime_name))
+	re = obj.session.get(const.API_BASE +const.SEARCHQUERYFIELD.format(anime_name) +const.QUERYFIELD)
 	if re.status_code != 200:
 		raise MAL_Error("error code returned")
 
