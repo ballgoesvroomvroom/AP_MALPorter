@@ -1,0 +1,1 @@
+## reads and parses the export .json file from animeplanet
