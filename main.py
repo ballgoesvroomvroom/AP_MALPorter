@@ -3,8 +3,8 @@ import json
 import time
 import os
 
-import ap_parser as ap
-import mal_interactor as mal
+from packages import ap_parser as ap
+from packages import mal_interactor as mal
 
 o_repr = {
 	"database file empty": "Database file, \"database.json\" is empty, write atleast \"{}\" into it",

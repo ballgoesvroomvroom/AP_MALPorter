@@ -7,7 +7,7 @@ o_repr = {
 	"empty aplist.json file": "AnimePlanet export file is empty, write \"{}\" into it atleast"
 }
 
-class AP_PARSER_ERROR():
+class AP_PARSER_ERROR(Exception):
 	def __init__(self, msg_code):
 		super().__init__(o_repr[msg_code])
 
