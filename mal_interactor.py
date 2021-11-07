@@ -25,10 +25,13 @@ class const():
 	INIT = False
 
 	STATE = "amistillintact"
+	MAXCONTENTSIZEUPONQUERY = 5 ## maximum amt of items to return when making a query
 
 	API_BASE = "https://api.myanimelist.net/v2/"
 	QUERYFIELD = "&fields=id,title,main_picture,alternative_titles,media_type,num_episodes"
-	SEARCHQUERYFIELD = "anime?q={}&limit=20&nsfw=true"
+	SEARCHQUERYFIELD = "anime?q={}&limit={}&nsfw=true".format("{}", MAXCONTENTSIZEUPONQUERY)
+
+	UPDATE_LIST_URL = "anime/{}/my_list_status"
 
 	BASE_URL = "https://myanimelist.net/v1/"
 	AUTH_URL = "oauth2/authorize?"
@@ -37,7 +40,7 @@ class const():
 	AUTH_PARAMS = "cache/auth_params.json"
 
 	SWAP_CHARACTERS = {
-		"&": " "
+		"&": " ",
 	}
 
 o_repr = {
@@ -75,7 +78,7 @@ class navig_obj():
 			if re.status_code != 200:
 				raise MAL_Error("error code returned")
 			else:
-				self.data = re.json()
+				return re.json()
 
 		else: return {}
 
@@ -86,7 +89,7 @@ class navig_obj():
 			if re.status_code != 200:
 				raise MAL_Error("error code returned")
 			else:
-				self.data = re.json()
+				return re.json()
 				
 		else: return {}
 
@@ -106,7 +109,16 @@ def parsename(anime_name):
 	"""
 	for c in const.SWAP_CHARACTERS:
 		anime_name = anime_name.replace(c, const.SWAP_CHARACTERS[c])
-	return anime_name
+
+	## replace out non ascii names with a whitespace
+	new_s = ""
+	for c in anime_name:
+		if ord(c) <= 31 or ord(c) >= 127:
+			new_s += " "
+		else:
+			new_s += c
+
+	return new_s[:64] ## ensure string does not exceed 64 characters else MAL API wont be happy
 
 def generate_codeverifier():
 	"""
@@ -260,24 +272,27 @@ def searchforanime(anime_name):
 	returns an array of possible matching animes in myanimelist's database
 	"""
 	anime_name = parsename(anime_name) ## make name url friendly
-	re = obj.session.get(const.API_BASE +const.SEARCHQUERYFIELD.format(anime_name) +const.QUERYFIELD)
+	link = const.API_BASE +const.SEARCHQUERYFIELD.format(anime_name) +const.QUERYFIELD
+	re = obj.session.get(link)
 	if re.status_code != 200:
+		print(anime_name)
+		print(link)
+		print(re.status_code, re.json())
 		raise MAL_Error("error code returned")
 
 	## wrap in it navig_obj
-	return navig_obj(re.json())
+	return navig_obj(re.json()), anime_name ## returns parsed anime name for output purposes	
 
 @__afterinit
-def query(anime_name):
-	"""
-	anime_name: str; anime name stored on anime-planet's database
-	"""
-	
-	
-
-@__afterinit
-def update_anime(id, state):
+def update_anime(animeid, data):
 	"""
 	id: int; mal id to 
 	"""
-	pass
+	req_str = const.API_BASE +(const.UPDATE_LIST_URL.format(animeid))
+
+	re = obj.session.put(req_str, data = data)
+	if re.status_code == 200:
+		return True
+	else:
+		print(re.json())
+		return False
