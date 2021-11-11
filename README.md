@@ -41,12 +41,15 @@ Key takeaways of the guide:
 
 You will need these two later.
 
-### Step 2: Get Python and Git into your local system
+### Step 2: Get Python and Git into your local system and cloning the repo
 Refer to [here](https://github.com/ballgoesvroomvroom/AP_MALPorter/tree/main/installation_guide).<br />
 Above guide is meant for people who are unfamiliar with the Git workflow and has no experience with Python.<br />
 Key takeaways of the guide:
 > Being able to use `git` command in your terminal and clone the repository to your local system<br />
 > Being able to use `py`/`python` command in your terminal
+
+#### Alternatively, you can download the `.zip` file from this repository
+This will remove the need of getting `git`.
 
 ### Step 3: Create local environment variables
 Create a `.env` file, its name can be anything really.<br />
@@ -98,11 +101,12 @@ Note:
 > Unlike running the code via the terminal, your working directory is now within the cloned project folder<br />
 > So if you want to reference a file (let's say `database.json`) which is inside `AP_MALPorter` using relative paths, you would simply do `database.json`
 ###### Though it is most advisable to run things in the terminal.
+You will not be able to capture the error messages fast enough if an error were to happen as the Python prompt would just close straight away.
 
 ### Step 6: Using the CLI
 CLI stands for "Command Line Interface".<br />
 It comes packed with a few commands to get you started.<br />
-Read [here](https://github.com/ballgoesvroomvroom/AP_MALPorter/tree/main/installation_guide/cli_guide) for more on it.<br />
+Read [here](https://github.com/ballgoesvroomvroom/AP_MALPorter/tree/main/installation_guide/cli_manual) for more on it.<br />
 <br />
 And you're done!
 

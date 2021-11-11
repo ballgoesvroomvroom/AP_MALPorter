@@ -25,7 +25,7 @@ Read through the `API License and Developer Agreement` ~your choice ლ(╹◡�
 You'd need to agree with it to move on, so.... its for the better good.<br />
 <br />
 After all that is done, hit the `Submit` button located at the bottom and followed by `Return to list`.<br />
-
+<br />
 ## Step 2: Retrieving the CLIENT_ID and CLIENT_SECRET
 Upon returning back to list, you would see your app listed under the section `Clients Accessing the MAL API`.<br />
 Edit your app.<br />
