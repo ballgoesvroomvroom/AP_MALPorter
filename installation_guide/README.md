@@ -36,7 +36,7 @@ Lets say we want to put the entire project folder in the `Desktop` folder, our p
 Running this command will get us to the working directory.<br />
 `cd C:\Users\faded\Desktop`<br />
 
-![](../static/win_cd_cmd.png)
+![](/installation_guide/static/win_cd_cmd.png)
 
 Then running,<br />
 ```git

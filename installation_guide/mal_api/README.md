@@ -5,7 +5,7 @@ You would need a MyAnimeList's account to continue.<br />
 ## Step 1: Creating the app
 Head over to [https://myanimelist.net/apiconfig](https://myanimelist.net/apiconfig).<br />
 Click on `Create ID`.<br />
-![screenshot!!](../../static/create_id.png)
+![screenshot!!](/installation_guide/static/create_id.png)
 <br />
 
 ## Step 1.1: Setting the details
@@ -29,7 +29,7 @@ After all that is done, hit the `Submit` button located at the bottom and follow
 ## Step 2: Retrieving the CLIENT_ID and CLIENT_SECRET
 Upon returning back to list, you would see your app listed under the section `Clients Accessing the MAL API`.<br />
 Edit your app.<br />
-![screenshot!!](../../static/edit_app.png)
+![screenshot!!](/installation_guide/static/edit_app.png)
 <br />
 You now have your `CLIENT_ID` and `CLIENT_SECRET`
 
