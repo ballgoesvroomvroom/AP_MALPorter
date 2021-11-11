@@ -2,7 +2,7 @@
 
 ## for generating of code_verifier
 import base64
-import os
+import os ## to reference files using relative paths too
 import re
 
 ## main module
@@ -21,7 +21,10 @@ e.g: 'https://myanimelist.net/anime/10087/Fate_Zero'
 mal_id is 10087
 """
 
+dirname = os.path.dirname
+
 class const():
+
 	INIT = False
 
 	STATE = "amistillintact"
@@ -37,30 +40,28 @@ class const():
 	AUTH_URL = "oauth2/authorize?"
 	GETTOKEN_URL = "oauth2/token"
 
-	AUTH_PARAMS = "cache/auth_params.json"
+	AUTH_PARAMS = os.path.join(dirname(dirname(__file__)), "cache/auth_params.json")
 
 	SWAP_CHARACTERS = {
 		"&": " ",
 	}
 
 o_repr = {
-	"have_not_init": "Have not initialised mal_interactor; call mal_interactor.authenticate(username, pw); custom_errorcode_403 (forbidden)",
+	"have_not_init": "Have not initialised mal_interactor; call mal_interactor.authenticate()",
 	"already init": "authenticate() was called more than once",
-	"missing cache file auth_params": "Missing cache file (auth_params.json) inside cache/",
-	"empty params file": "auth_params.json is empty, write \"{}\" into it",
+	"missing cache file auth_params": "Missing cache file (auth_params.json) inside {}",
+	"empty params file": "{} is empty, write \"{{}}\" into it",
 	"missing client_id": "Missing CLIENT_ID field in .env file",
-	"missing client_secret": "Missing CLIENT_SECRET field in .env file",
 	"missing client_secret": "Missing CLIENT_SECRET field in .env file",
 	"error getting token": "Error trying to parse token and state string into respective variables",
 	"missmatched state": "Returned state is not the same as sent state",
-	"error authenticating": "Error authenicating with token; failed to get access token",
-	"error refresh_token": "Error refreshing access token",
+	"error authenticating": "Error authenticating with token; failed to get access token",
 	"error code returned": "Error raised when interacting with MAL API"
 }
 
 class MAL_Error(Exception):
-	def __init__(self, msg_code):
-		super().__init__(o_repr[msg_code])
+	def __init__(self, msg_code, *args):
+		super().__init__(o_repr[msg_code].format(*args))
 
 class obj():
 	session = requests.Session()
@@ -177,7 +178,7 @@ def authenticate():
 			try:
 				d = json.load(f)
 			except json.decoder.JSONDecodeError:
-				raise MAL_Error("empty params file")
+				raise MAL_Error("empty params file", const.AUTH_PARAMS)
 		if "refresh_token" in d:
 			print("refresh_token key found in cache folder.")
 			print("Attempting to refresh access token...")
@@ -196,7 +197,7 @@ def authenticate():
 				return
 				
 	except FileNotFoundError:
-		raise MAL_Error("missing cache file auth_params")
+		raise MAL_Error("missing cache file auth_params", const.AUTH_PARAMS)
 	##
 
 	## user's authorisation needed

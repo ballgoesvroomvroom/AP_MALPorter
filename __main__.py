@@ -2,18 +2,21 @@
 import json
 import time
 import os
+import argparse
 
 from packages import ap_parser as ap
 from packages import mal_interactor as mal
+from packages import commands as cmd
 
 o_repr = {
-	"database file empty": "Database file, \"database.json\" is empty, write atleast \"{}\" into it",
-	"missing database file": "Missing database file, \"database.json\" in project"
+	"invalid database file input": "Invalid database file input, \"{}\"",
+	"database file empty": "Database file, \"{}\" is empty, write atleast \"{{}}\" into it",
+	"missing database file": "Missing database file, \"{}\" in project",
 }
 
 class MainActionError(Exception):
-	def __init__(self, msg_code):
-		super().__init__(o_repr[msg_code])
+	def __init__(self, msg_code, *args):
+		super().__init__(o_repr[msg_code].format(*args))
 
 def _parsekey(foo):
 	## used as a decorator
@@ -29,18 +32,27 @@ class database():
 	## simple json database wrapper
 	## database for the matching anime name local to anime-planet's database to the anime_id in myanimelist
 	## data base stored the parsed name of anime
-	FILE = "database.json"
+	INIT = False
+
+	FILE = ""
 	OBJ = {}
-	def initialise():
+	def initialise(filename):
 		## writes the json content in DATABASE_FILE to DATABASE_OBJ
+
+		## validate filename input to see if its a .json file
+		if filename[::-1][:5] != ".json"[::-1]:
+			raise MainActionError("invalid database file input")
+
+		database.FILE = filename
+
 		try:
 			with open(database.FILE, "r") as f:
 				try:
 					database.OBJ = json.load(f)
 				except json.decoder.JSONDecodeError:
-					raise MainActionError("database file empty")
+					raise MainActionError("database file empty", database.FILE)
 		except FileNotFoundError:
-			raise MainActionError("missing database file")
+			raise MainActionError("missing database file", database.FILE)
 
 	def _write():
 		with open(database.FILE, "w") as f:
@@ -63,8 +75,8 @@ class database():
 		database.OBJ[key] = value
 		database._write()
 
-	@_parsekey
-	def delete(key, value):
+	##@_parsekey
+	def delete(key):
 		if key in database.OBJ:
 			del database.OBJ[key]
 			database._write()
@@ -155,7 +167,7 @@ class query_object():
 				x = input("\nCustom anime id: ")
 				try:
 					x = int(x)
-					if x < 0: raise ValueError
+					if x <= 0: raise ValueError
 
 					confirm = input("Confirm your input (re-enter the same value): ")
 					try:
@@ -265,18 +277,30 @@ class print_helper():
 	def p(self, data):
 		print(self.transformfunc(data))
 
-def clearConsole():
-	command = "clear"
-	if os.name in ("nt", "dos"):  # If Machine is running on Windows, use cls
-		command = "cls"
-	os.system(command)
+def clear_console():
+	cmd = "clear"
+	if os.name in ("nt", "dos"): cmd = "cls" ## for windows
+	os.system(cmd)
 
+
+SETUP_RAN = False
 class actions():
-	def setup():
-		ap.init()
-		database.initialise()
+	def setup(args): ## .i and .db are attributes of args containing the input .json file and local database .json file respectively
+		global SETUP_RAN
 
-		mal.authenticate()
+		if not SETUP_RAN:
+			if not ap.INIT:
+				ap.init(args.i)
+
+			if not database.INIT:
+				database.initialise(args.db)
+				database.INIT = True
+
+			mal.authenticate()
+
+			SETUP_RAN = True
+		else:
+			return ## do nothing since already setup
 
 	def port():
 		aplist = ap.get()
@@ -315,13 +339,15 @@ class actions():
 					]
 				)
 
-			clearConsole()
+			time.sleep(.5)
+			clear_console()
 			i += 1
 
 		print("Successfully matched {:.2f}% of the animes in anime list exported from AnimePlanet. ({}/{})".format(successful_finds/total_anime_count *100, successful_finds, total_anime_count))
 
 		add_to_mal = input("Push to MyAnimeList's database (update your anime list with the status, y/n): ").lower()
 		if add_to_mal != "y":
+			print("Exiting..")
 			return ## end of program
 
 		## add to anime
@@ -357,9 +383,86 @@ class actions():
 		pass
 
 if __name__ == "__main__":
-	actions.setup()
+	parser = argparse.ArgumentParser()
 
-	actions.port()
+	parser.add_argument("--m", "--mode", dest="m", required=False, help="Just run porting function, used with -i and -db", action="store_true")
+	parser.add_argument("-i", "--input", dest="i", required=False, help="AnimePlanet's export list name with .json suffix.")
+	parser.add_argument("-db", "--database", dest="db", required=False, help="Local database file to use when matching anime name to their corresponding ID, .json file.")
+	args = parser.parse_args()
+
+	if args.i == None:
+		args.i = cmd.get_jsonfile_input("Exported AnimePlanet's file (include .json suffix): ")
+	if args.db == None:
+		args.db = cmd.get_jsonfile_input("Local database file (include .json suffix): ")
+
+	actions.setup(args)
+	if args.m == True: ## with the --m flag, port straight away
+		actions.port()
+
+	else:
+		print("") ## new line
+
+		running = True
+		while running:
+			action = input("ap_malporter: ")
+
+			cmdname, input_args = cmd.getcommand(action)
+
+			exit = False
+			if cmdname == "port":
+				## start porting process
+				actions.port()
+
+			elif cmdname == "state":
+				## print out file objects that are currently being used
+				print("AnimePlanet's exported list: {}".format(ap.FILENAME))
+				print("Local database file: {}".format(database.FILE))
+
+			elif cmdname == "add":
+				## add new key to database
+				## validate the args
+				if len(input_args) != 2:
+					print("Invalid amount of arguments, arguments must be: nameofanime, animeid")
+					print("Tip: To enter names with spaces, encapsulate the entire name with square brackets.\nE.g. add [your name.] 32281")
+					exit = True
+				else:
+					try:
+						key = int(input_args[1])
+						if key <= 0: raise ValueError
+					except ValueError:
+						print("AnimeID must be a positive integer only [>0].")
+						exit = True
+
+				if not exit:
+					if input_args[0] in database.OBJ:
+						confirmation = input("\"{}\" already exists in local database base with corresponding ID: {}\nContinue to overwrite value to {}? (y/n): ".format(input_args[0], database.OBJ[input_args[0]], input_args[1])).lower()
+						if confirmation != "y":
+							print("Confirmation failed.")
+							exit = True
+
+				if not exit:
+					database.add(input_args[0], int(input_args[1]))
+					print("\"{}\" added to database with corresponding ID of {}.".format(input_args[0], input_args[1]))
+			elif cmdname == "rm":
+				## remove database value from key
+				## validate the args
+				if len(input_args) != 1:
+					print("Invalid amount of arguments, arguments must be: nameofanime")
+					print("Tip: To enter names with spaces, encapsulate the entire name with square brackets.\nE.g. rm [your name.]")
+					exit = True
+				elif not input_args[0] in database.OBJ:
+					print("\"{}\" does not exists in local database file.".format(input_args[0]))
+					exit = True
+				else:
+					value = database.OBJ[input_args[0]]
+
+				if not exit:
+					database.delete(input_args[0])
+					print("\"{}\" removed from database with corresponding ID of {}.".format(input_args[0], value))
+			else:
+				print("{} command is not recognised.".format(cmdname))
+			print("") ## blank for that new line
+
 
 	# anime_id = query_object("horimiya").start()
 	# print("GOTTEN MATCHING ANIME ID OF {}.".format(anime_id))

@@ -3,16 +3,14 @@ import json
 
 o_repr = {
 	"have not init": "AP_Parser was never initialised; call init() function to initialise",
-	"missing aplist.json file": "Missing AnimePlanet export file, \"APList.json\"",
-	"empty aplist.json file": "AnimePlanet export file is empty, write \"{}\" into it atleast"
+	"missing aplist.json file": "Missing AnimePlanet export file, \"{}\"",
+	"empty aplist.json file": "AnimePlanet export file, \"{}\", is empty",
+	"malformed export list": "AnimePlanet export file, \"{}\", is malformed; not formatted with the correct keys properly"
 }
 
 class AP_PARSER_ERROR(Exception):
-	def __init__(self, msg_code):
-		super().__init__(o_repr[msg_code])
-
-INIT = False
-FILENAME = "APList.json"
+	def __init__(self, msg_code, *args):
+		super().__init__(o_repr[msg_code].format(*args))
 
 def __afterinit(foo):
 	def inner(*args, **kwargs):
@@ -21,6 +19,9 @@ def __afterinit(foo):
 		else:
 			raise AP_PARSER_ERROR("have not init")
 	return inner
+
+INIT = False
+FILENAME = ""
 
 GLOBAL_OBJECT = None
 class browserObject():
@@ -108,17 +109,27 @@ class childrenobject():
 
 		return code
 
-def init():
+def init(filename):
 	global GLOBAL_OBJECT
+	global FILENAME
+	global INIT
+
+	FILENAME = filename
+
 	try:
 		with open(FILENAME, "r") as f:
 			try:
 				data = json.load(f)
-				GLOBAL_OBJECT = browserObject(data)
-			except json.decoder.JSONDecodeError:
-				raise AP_PARSER_ERROR("empty aplist.json file")
-	except FileNotFoundError:
-		raise AP_PARSER_ERROR("missing aplist.json file")
+				if not "entries" in data:
+					raise AP_PARSER_ERROR("malformed export list", FILENAME)
 
+				GLOBAL_OBJECT = browserObject(data)
+				INIT = True
+			except json.decoder.JSONDecodeError:
+				raise AP_PARSER_ERROR("empty aplist.json file", FILENAME)
+	except FileNotFoundError:
+		raise AP_PARSER_ERROR("missing aplist.json file", FILENAME)
+
+@__afterinit
 def get():
 	return GLOBAL_OBJECT
