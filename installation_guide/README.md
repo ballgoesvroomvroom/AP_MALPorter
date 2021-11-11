@@ -7,7 +7,7 @@ Refer to other sources at your own discretion.<br />
 
 Operating systems:<br />
 [Windows](https://github.com/ballgoesvroomvroom/AP_MALPorter/tree/main/installation_guide#windows)<br />
-[Linux](https://github.com/ballgoesvroomvroom/AP_MALPorter/tree/main/installation_guide#linx)<br />
+[Linux](https://github.com/ballgoesvroomvroom/AP_MALPorter/tree/main/installation_guide#linux)<br />
 [macOS](https://github.com/ballgoesvroomvroom/AP_MALPorter/tree/main/installation_guide#macos)
 
 ## Windows
