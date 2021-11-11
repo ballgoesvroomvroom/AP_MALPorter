@@ -1,9 +1,9 @@
 # Command Line Interface Manual
-A manual for the CLI.
+A manual for a rather simple CLI.
 
 ## Arguments
 ### --m/--mode
-When this flag is shown, it will jump to porting straight away
+When this flag is shown, it will jump to porting straight away.
 
 ### -i/--input [filepath: str]
 Supply the input file, the exported list from AnimePlanet.<br />

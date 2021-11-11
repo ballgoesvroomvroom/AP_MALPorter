@@ -48,6 +48,8 @@ Key takeaways of the guide:
 > Being able to use `git` command in your terminal and clone the repository to your local system<br />
 > Being able to use `py`/`python` command in your terminal
 
+<br />
+
 #### Alternatively, you can download the `.zip` file from this repository
 This will remove the need of getting `git`.
 
@@ -100,8 +102,11 @@ Without using the terminal, simply clicking the `__main__.py` script will execut
 Note:
 > Unlike running the code via the terminal, your working directory is now within the cloned project folder<br />
 > So if you want to reference a file (let's say `database.json`) which is inside `AP_MALPorter` using relative paths, you would simply do `database.json`
+
+<br />
+
 ###### Though it is most advisable to run things in the terminal.
-You will not be able to capture the error messages fast enough if an error were to happen as the Python prompt would just close straight away.
+You will not be able to capture the error messages fast enough if an error were to happen as the Python prompt would just close straight away.<br />
 
 ### Step 6: Using the CLI
 CLI stands for "Command Line Interface".<br />
