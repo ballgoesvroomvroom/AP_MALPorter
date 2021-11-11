@@ -34,7 +34,7 @@ The list of instructions is created with being able to cater to people of differ
 <br />
 ### Step 1: Setting up MyAnimeList's app
 Setting up a MyAnimeList's app will allow you to access its API.<br />
-Refer to [here](https://github.com/FadedJayden/AP_MALPorter/installation_guide/mal_api) for the guide.<br />
+Refer to [here](https://github.com/ballgoesvroomvroom/AP_MALPorter/tree/main/installation_guide/mal_api) for the guide.<br />
 Key takeaways of the guide:
 > Create a MyAnimeList's app<br />
 > Get `CLIENT_ID` and `CLIENT_SECRET`
@@ -42,7 +42,7 @@ Key takeaways of the guide:
 You will need these two later.
 
 ### Step 2: Get Python and Git into your local system
-Refer to [here](https://github.com/FadedJayden/AP_MALPorter/installation_guide).<br />
+Refer to [here](https://github.com/ballgoesvroomvroom/AP_MALPorter/tree/main/installation_guide).<br />
 Above guide is meant for people who are unfamiliar with the Git workflow and has no experience with Python.<br />
 Key takeaways of the guide:
 > Being able to use `git` command in your terminal and clone the repository to your local system<br />
@@ -102,7 +102,7 @@ Note:
 ### Step 6: Using the CLI
 CLI stands for "Command Line Interface".<br />
 It comes packed with a few commands to get you started.<br />
-Read [here](https://github.com/FadedJayden/AP_MALPorter/installation_guide/cli_guide) for more on it.<br />
+Read [here](https://github.com/ballgoesvroomvroom/AP_MALPorter/tree/main/installation_guide/cli_guide) for more on it.<br />
 <br />
 And you're done!
 

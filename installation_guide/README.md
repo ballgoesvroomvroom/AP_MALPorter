@@ -6,9 +6,9 @@ This guide uses resources readily available in the internet and is meant to aid 
 Refer to other sources at your own discretion.<br />
 
 Operating systems:<br />
-[Windows](https://github.com/FadedJayden/AP_MALPorter/installation_guide#windows)<br />
-[Linux](https://github.com/FadedJayden/AP_MALPorter/installation_guide#linx)<br />
-[macOS](https://github.com/FadedJayden/AP_MALPorter/installation_guide#macos)
+[Windows](https://github.com/ballgoesvroomvroom/AP_MALPorter/tree/main/installation_guide#windows)<br />
+[Linux](https://github.com/ballgoesvroomvroom/AP_MALPorter/tree/main/installation_guide#linx)<br />
+[macOS](https://github.com/ballgoesvroomvroom/AP_MALPorter/tree/main/installation_guide#macos)
 
 ## Windows
 Installation time: ~10minutes<br />
@@ -36,7 +36,7 @@ Lets say we want to put the entire project folder in the `Desktop` folder, our p
 Running this command will get us to the working directory.<br />
 `cd C:\Users\faded\Desktop`<br />
 
-![](https://github.com/FadedJayden/AP_MALPorter/installation_guide/static/win_cd_cmd.png)
+![](https://github.com/ballgoesvroomvroom/AP_MALPorter/tree/main/installation_guide/static/win_cd_cmd.png)
 
 Then running,<br />
 ```git
