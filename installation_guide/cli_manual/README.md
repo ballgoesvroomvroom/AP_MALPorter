@@ -23,7 +23,7 @@ Namely, your exported AnimePlanet's list and local database file.<br />
 Both are `.json` files.
 
 ### add [key: str] [animeid: integer]
-Add a new value to the local database.<br />
+Manually add a new value to the local database.<br />
 `animeid` must be an integer greater than zero.<br />
 When the same key already exists in the database, it would ask for confirmation to override it with the new animeid.
 
