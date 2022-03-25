@@ -18,7 +18,11 @@ class MainActionError(Exception):
 	def __init__(self, msg_code, *args):
 		super().__init__(o_repr[msg_code].format(*args))
 
-def _parsekey(foo):
+class States():
+	DEBUG_MODE = False  ## whether to print out debug statements
+	SETUP_RAN = False   ## toggled True when actions.setup() is called; just to track if all objects (ap, interactor, local database) has been ran
+
+def _parsekey(foo): ## not used
 	## used as a decorator
 	def inner(key, *args):
 		## encode characters out of ascii range
@@ -27,6 +31,12 @@ def _parsekey(foo):
 		return foo(key, *args)
 
 	return inner
+
+def debug(*s: str):
+	if not States.DEBUG_MODE: return
+
+	## unpack *args
+	print("DEBUG:", *s)
 
 class database():
 	## simple json database wrapper
@@ -39,7 +49,7 @@ class database():
 	def initialise(filename):
 		## writes the json content in DATABASE_FILE to DATABASE_OBJ
 
-		## validate filename input to see if its a .json file
+		## validate filename input to see if its a .json file; should already be validated
 		if filename[::-1][:5] != ".json"[::-1]:
 			raise MainActionError("invalid database file input")
 
@@ -63,15 +73,21 @@ class database():
 
 	##@_parsekey ## no need to parse this as database.OBJ has its unicode characters, e.g '\u2312' converted to their characters
 	def find(key):
+		debug("find key: [{}]".format(key))
+		debug("res:", key in database.OBJ)
 		try:
-			return database.OBJ[key]
+			e = database.OBJ[key]
+			debug("final-true")
+			return e
 		except:
+			debug("final-false")
 			return None
 
 	##@_parsekey
 	def add(key, value):
 		## does not need to parse it in unicode_escape as json.dumps() does that for us
 		## does not check for duplicate keys
+		debug("adding key: [{}] with value: [{}]".format(key, value))
 		database.OBJ[key] = value
 		database._write()
 
@@ -85,9 +101,12 @@ class database():
 class query_object():
 	## handles selection for anime upon query
 	## interacts with database class
+	## acts as a model and controller at the same time
+	## after a successful query, will immediately store the anime's name on AP's database into local database with corresponding MAL's anime id (no clue why i implemented it this way)
 	INDENT = "  "
 	def __init__(self, anime_name):
 		## make a new query
+		debug("query =", anime_name)
 		self.query = anime_name
 		self.results = None ## only call for API when cannot find in local database
 
@@ -99,7 +118,7 @@ class query_object():
 		query_size = mal.const.MAXCONTENTSIZEUPONQUERY
 
 		while True:
-			choice = input("Input choice\n\t[1 - {}]\n\t[-3 to skip]\n\t[-2 for previous result]\n\t[-1 for next result]\n\t[0 for custom input]\n:".format(query_size))
+			choice = input("Input choice\n\t[1 - {}]\n\t[0 for custom input]\n\t[-1 for next result]\n\t[-2 for previous result]\n\t[-3 to skip]\n:".format(query_size))
 			try:
 				choice = int(choice)
 
@@ -110,24 +129,28 @@ class query_object():
 				try:
 					confirm = int(confirm)
 					if choice == confirm:
+						## end of input 'stack', return confirmed value
 						return choice
 					else: print("Validation failed.\n")
 				except ValueError:
-					print("Invald failed.\n")
+					print("Invalid input.\n")
 			except ValueError:
 				## not a number
 				print("Invalid input.\n")
 
 	def start(self):
+		## find in local database first
 		print("Searching for corresponding anime id in [{}].".format(database.FILE))
 		db_query = database.find(self.query)
 		if db_query != None:
 			print("Found match in database.")
 			return db_query
 		else:
-			print("No match found in database.")
+			print("No match found in database.\nSearching MAL.")
+			## proceed to use MAL's api
 			self.results, self.actualquerystring = mal.searchforanime(self.query)
 
+		## couldn't find in local database, proceed with MAL's api
 		print("Finding exact match in query results.")
 		re = self.findinresults()
 		if re != None:
@@ -137,7 +160,6 @@ class query_object():
 			print("Added corresponding anime id to database.")
 
 			print("Found exact match in query results.")
-			time.sleep(3)
 			return re
 		else:
 			print("Failed to find exact match in query results.")
@@ -147,7 +169,7 @@ class query_object():
 
 		anime_id = -1
 		while anime_id == -1:
-			choice = self.__getinput() ## validates it is in range
+			choice = self.__getinput() ## will validates if input is in range
 			if choice == -1:
 				if self.next():
 					print("Going to next page.\n")
@@ -217,7 +239,9 @@ class query_object():
 
 		for node in self.results.data["data"]:
 			data = node["node"]
-			if data["alternative_titles"]["en"] == self.query:
+			if data["alternative_titles"]["en"] == self.query or \
+				data["title"] == self.query:
+				## both possible cases
 				return data["id"]
 
 		return None ## no match found
@@ -283,12 +307,10 @@ def clear_console():
 	os.system(cmd)
 
 
-SETUP_RAN = False
 class actions():
+	## singleton object
 	def setup(args): ## .i and .db are attributes of args containing the input .json file and local database .json file respectively
-		global SETUP_RAN
-
-		if not SETUP_RAN:
+		if not States.SETUP_RAN:
 			if not ap.INIT:
 				ap.init(args.i)
 
@@ -298,11 +320,12 @@ class actions():
 
 			mal.authenticate()
 
-			SETUP_RAN = True
+			States.SETUP_RAN = True
 		else:
 			return ## do nothing since already setup
 
-	def port():
+	def port(toWait = True):
+		## toWait: boolean; if False, will not wait for 0.5 seconds between each anime entry
 		aplist = ap.get()
 		to_port = [] ## array to store all the anime data to update into list later
 
@@ -339,7 +362,7 @@ class actions():
 					]
 				)
 
-			time.sleep(.5)
+			if toWait: time.sleep(.5)
 			clear_console()
 			i += 1
 
@@ -388,19 +411,24 @@ if __name__ == "__main__":
 	parser.add_argument("--m", "--mode", dest="m", required=False, help="Just run porting function, used with -i and -db", action="store_true")
 	parser.add_argument("-i", "--input", dest="i", required=False, help="AnimePlanet's export list name with .json suffix.")
 	parser.add_argument("-db", "--database", dest="db", required=False, help="Local database file to use when matching anime name to their corresponding ID, .json file.")
+	parser.add_argument("--fast", dest="toWait", required=False, help="Run with fast mode enabled.", action="store_false") ## default .toWait is true
+	parser.add_argument("--debug", dest="toDebug", required=False, help="Run with debugging statements printed to output.", action="store_true")
 	args = parser.parse_args()
 
 	if args.i == None:
 		args.i = cmd.get_jsonfile_input("Exported AnimePlanet's file (include .json suffix): ")
 	if args.db == None:
 		args.db = cmd.get_jsonfile_input("Local database file (include .json suffix): ")
+	if args.toDebug:
+		## set debug_mode global state
+		States.DEBUG_MODE = True
 
 	actions.setup(args)
-	if args.m == True: ## with the --m flag, port straight away
-		actions.port()
+	if args.m: ## with the --m flag, port straight away
+		actions.port(args.toWait)
 
 	else:
-		print("") ## new line
+		print("\nRefer to the manual: https://github.com/ballgoesvroomvroom/AP_MALPorter/blob/ef9d8a8a41d67a129a1df2bacc8df30b1784cacd/installation_guide/cli_manual/README.md") ## new line
 
 		running = True
 		while running:
@@ -411,7 +439,12 @@ if __name__ == "__main__":
 			exit = False
 			if cmdname == "port":
 				## start porting process
-				actions.port()
+				actions.port(args.toWait)
+
+			elif cmdname == "fast":
+				## toggle toWait variable
+				args.toWait = not args.toWait
+				print("\nLeft fast mode" if args.toWait else "\nEntered fast mode")
 
 			elif cmdname == "state":
 				## print out file objects that are currently being used

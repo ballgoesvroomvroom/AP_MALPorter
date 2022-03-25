@@ -5,11 +5,12 @@
 
 ## 1.0 Features
 - Fast and gets the job done; built mainly for the sole purpose of porting over anime data from AnimePlanet's database to MyAnimeList's database.
-- Lightweight; little to no third party dependancies used.
-- Simple to use; simply put in your export list from AnimePlanet and it'd do wonders, though some human intervention may be needed.
+- Lightweight; only one third party dependancies is used - `requests`.
+- Simple to use; simply put in your exported list from AnimePlanet and it'd do wonders, though some human intervention may be needed.
 - Comes pre-packaged with a local database that will expand gradually over use since both sites have name discrepancies.
 
 ## 1.1 Behaviour
+- Your list on either sites can be private, as long as you authorise the MAL client app.
 - Unable to update `is_rewatching` value in MyAnimeList since AnimePlanet did not include any likewise data when exporting.
 - Scores on AnimePlanet will multiply by 2 when updating score in MyAnimeList since the latter has scores up til 10.
 - Number of watched episodes and amount of times rewatched will update accordingly.
@@ -17,15 +18,22 @@
 - Same goes for `Start Date` and `Finish Date` as the official MyAnimeList API does not include any endpoints to update those values.
 - If an anime in AnimPlanet has a status of `won't watch` it will be converted to `dropped` since there are no corresponding values in MyAnimePlanet.
 - With regards to MyAnimeList's API behaviour, it will override old data if new data is pushed to its server.
+- There are some entries in AP's database where it is bundled as one whereas over on MAL's database, such as [AP[0]](https://www.anime-planet.com/anime/blue-spring-ride-unwritten), [AP[1]](https://www.anime-planet.com/anime/blue-spring-ride-page-13) and [MAL[0]](https://myanimelist.net/anime/24151/Ao_Haru_Ride_OVA).
+  - MAL entry had the two episodes bundled together as one show whereas AP had the two episodes separate.
+  - Considered a caveat since the expected behaviour is to just map the two episodes (technically one show) from AP to the one MAL ID.
+  - The status/ratings would be overrided for whichever is ported last.
+
 
 ## 1.2 Brief description on steps
 Uses the exported list provided by user.<br /><br />
-Loops through list and tries to automatically find the matching anime on MyAnimeList (both sites might have name discrepancies for the same anime).<br /><br />
-If it finds none matching, you would be given a list which contains up to 5 anime ranking from the most relevance to the least, input the number to select.<br />
+Iterates through exported list and tries to find entry in local database (matched anime's name on AP's database with MAL ID).<br /><br />
+If no matching entry found within local database, it'll query and try to automatically find the matching anime on MyAnimeList (both sites might have name discrepancies for the same anime).<br /><br />
+If it finds none matching ( < 100% match), you would be given a list which contains up to 5 animes, ranking from the most relevance to the least; input the number to select.<br />
 > If returned list does not contains any matching results, an input `0` will allow you to type in the anime ID on MyAnimePlanet.<br />
 > Else, input `-3` to skip.
 
-After that is done it will add the anime name with its corresponding anime id into the local database.<br /><br />
+After that is done it will add the anime name with its corresponding MAL ID into the local database.<br /><br />
+Proceeding with the next anime in the exported list.<br /><br />
 At the very end, upon user's confirmation it will port all the anime that were managed to be matched with an anime id to MyAnimeList.
 
 ---
@@ -39,7 +47,8 @@ Key takeaways of the guide:
 > Create a MyAnimeList's app<br />
 > Get `CLIENT_ID` and `CLIENT_SECRET`
 
-You will need these two later.
+You will need these two later.<br />
+NOTE: The `CLIENT_SECRET` should be treated as a confidential item, like a password, do not share it around.
 
 ### Step 2: Get Python and Git into your local system and cloning the repo
 Refer to [here](https://github.com/ballgoesvroomvroom/AP_MALPorter/tree/main/installation_guide).<br />
@@ -56,6 +65,7 @@ This will remove the need of getting `git`.
 ### Step 3: Create local environment variables
 Create a `.env` file, its name can be anything really.<br />
 Just make sure it ends with the `.env` file extension.<br />
+Save the file within the project folder, `AP_MALPorter`.<br />
 In it, create two variables and fill them up with the values obtained from **Step 1**.<br />
 `CLIENT_ID` and `CLIENT_SECRET`, word for word, case sensitive.<br />
 <br />
@@ -66,7 +76,12 @@ CLIENT_SECRET = 5aeed4fd04ff666e61fc573800baa2019516263d6531178174be81f0da53f51e
 ```
 ###### Of course those are just keyboard smashings.
 
-### Step 4: Install third-party dependenacies
+### Step 4: Getting the exported list from AnimePlanet
+Log in to AnimePlanet and head over to [www.anime-planet.com/users/export_list.php](https://www.anime-planet.com/users/export_list.php) to export your anime data.<br />
+Name it whatever you want (needs to end with `.json` though), you'll be asked to input it in later.<br />
+Highly advise you to save it alongside the `.env` file, in the project folder, `AP_MALPorter`, if you're not too well-versed with directories.<br />
+
+### Step 5: Install third-party dependenacies
 There is only one dependancy that this project requires as of so far.<br />
 Check [this](https://github.com/FadedJayden/AP_MALPorter#21-dependencyies-used-in-this-project) section.<br />
 Simply run the command:<br />
@@ -79,7 +94,7 @@ pip install -r requirements.txt
 ```
 Though the former should suffice.
 
-### Step 5: Run the code
+### Step 6: Run the code
 You can either run the code with your terminal or by simply clicking on the `__main__.py` script in the project folder.<br />
 <br />
 Right now, I am under the assumption that the cloned project folder is stored in `C:\Users\faded\Desktop` so the absolute path to the cloned project folder is `C:\Users\faded\Desktop\AP_MALPorter`.
@@ -108,7 +123,7 @@ Note:
 ###### Though it is most advisable to run things in the terminal.
 You will not be able to capture the error messages fast enough if an error were to happen as the Python prompt would just close straight away.<br />
 
-### Step 6: Using the CLI
+### Step 7: Using the CLI
 CLI stands for "Command Line Interface".<br />
 It comes packed with a few commands to get you started.<br />
 Read [here](https://github.com/ballgoesvroomvroom/AP_MALPorter/tree/main/installation_guide/cli_manual) for more on it.<br />

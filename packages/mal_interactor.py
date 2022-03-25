@@ -170,7 +170,7 @@ def refresh_accesstoken(refresh_token):
 
 def authenticate():
 	if const.INIT: raise MAL_Error("already init")
-	print("Beginning the process of authorisation.")
+	print("\nBeginning the process of authorisation.")
 
 	## check for existing refresh token
 	try:
@@ -226,7 +226,7 @@ def authenticate():
 		auth_header += param
 
 		i += 1
-	re = input("Head to:\n{}\nTo authorise access and then past the code here: ".format(auth_header))
+	re = input("Head to:\n{}\nAuthorise access and paste the FULL callback url (browswer url) here: ".format(auth_header))
 	try:
 		token, state = re.split("/")[-1][1:].split("&") ## [:1] to remove leading `?`
 		token = token[len("code="):] ## remove header
