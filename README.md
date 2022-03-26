@@ -162,6 +162,14 @@ Fix: Ensure that your `.json` file has some contents in it. If it is blank, just
 Desc: Your local database inputted file is not a valid file because it does not exists.<br />
 Fix: Ensure that the file you inputted for the local database exists in your system.
 
+#### `Missing saves.json file in cache folder, tried to reference C:\users\...\cache\saves.json`
+Desc: Preferences file is not present in the `/cache` folder under project folder, `AP_MALPorter`.<br />
+Fix: Create a new `.json` file, name it `saves.json` and save it under the `/cache` folder under project folder.
+
+#### `Contents of saves.json is empty, write atleast "{}" into it`
+Desc: Preference file - `saves.json` file under `/cache` folder in project folder, is empty.<br />
+Fix: Ensure that `saves.json` has atleast `{}` written to it.
+
 ### AP_PARSER_ERROR:
 #### `AP_Parser was never initialised; call init() function to initialise`
 Desc: Internal error with the scripts; `ap_parser.py` was never intialised yet functions are called.<br />

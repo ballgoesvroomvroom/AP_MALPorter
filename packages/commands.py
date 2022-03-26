@@ -1,6 +1,8 @@
 ## used to make the CLI more interactive and beautiful o(*￣▽￣*)ブ
 import os
 
+cwd = os.getcwd()
+
 def getcommand(cmd_str):
 	"""
 	Takes in a string, e.g: rm abc [cdef ghi abc song]
@@ -45,13 +47,15 @@ def is_json(filepath):
 	Checks for file existence by using os.path.exists() function
 	Does not check for file signature since .json does not have it
 	"""
-	return [filepath[-5:] == ".json", os.path.exists(filepath)]
+	return filepath[-5:] == ".json" and os.path.exists(filepath)
 
-def get_jsonfile_input(prompt_str):
+def get_jsonfile_input(prompt_str, required=True, onempty=""):
 	"""
 	Gets input that is a .json filepath
 	Continuously validates input; reprompts if its invalid
 	Returns the inputted filepath that has been validated
+
+	If required is False, will return onempty value when input is empty, ""
 	"""
 	if prompt_str == None:
 		prompt_str = "Input .json file (include .json suffix): "
@@ -60,8 +64,15 @@ def get_jsonfile_input(prompt_str):
 	while validating:
 		i = input(prompt_str)
 
+		## case
+		if not required and i == "":
+			return onempty
+
+		## convert to absolute path
+		i = os.path.join(cwd, i)
+
 		re = is_json(i)
-		validating = not (re[0] and re[1])
+		validating = not re
 		if validating: print("Invalid file name or file does not exists.\n")
 
 	return i

@@ -1,6 +1,7 @@
 ## main code
 import json
 import time
+import sys
 import os
 import argparse
 
@@ -8,10 +9,14 @@ from packages import ap_parser as ap
 from packages import mal_interactor as mal
 from packages import commands as cmd
 
+dirname = os.path.dirname
+
 o_repr = {
 	"invalid database file input": "Invalid database file input, \"{}\"",
 	"database file empty": "Database file, \"{}\" is empty, write atleast \"{{}}\" into it",
 	"missing database file": "Missing database file, \"{}\" in project",
+	"missing saves.json file": "Missing saves.json file in cache folder, tried to reference {}",
+	"saves.json empty": "Contents of saves.json is empty, write atleast \"{{}}\" into it"
 }
 
 class MainActionError(Exception):
@@ -37,6 +42,58 @@ def debug(*s: str):
 
 	## unpack *args
 	print("DEBUG:", *s)
+
+class saves():
+	## saves preferences /paths to redundant files to be reused on next session
+	## such as exported list etc
+	## singleton object
+	def initialise():
+		debug("initialise")
+		debug("current directory:", os.path.abspath(__file__))
+		saves.FILE = os.path.join(dirname(os.path.abspath(__file__)), "cache/saves.json")
+		saves.DATA = {} ## store the saves.json file contents here
+		saves.newData = False ## will be toggled True when .set() is called, toggled False is .get() is called, determines if changes were made to local data internally
+
+		saves.read()
+
+	def read():
+		try:
+			with open(saves.FILE, "r") as f:
+				try:
+					d = json.load(f)
+
+					## don't overwrite entire data
+					for key in d:
+						if key[:2] == "//":
+							## ignore element, treated as a comment, refer to cache/saves.json to understand the schematics
+							continue
+
+						saves.DATA[key] = d[key]
+				except json.decoder.JSONDecodeError:
+					raise MainActionError("saves.json empty")
+		except FileNotFoundError:
+			raise MainActionError("missing saves.json file", saves.FILE)
+
+	def write():
+		try:
+			with open(saves.FILE, "w") as f:
+				f.write(json.dumps(saves.DATA, indent=4, sort_keys=True))
+		except FileNotFoundError:
+			raise MainActionError("missing saves.json file")
+
+	def get(propertyName):
+		## will get the current value in the file
+		saves.read()
+
+		if not propertyName in saves.DATA:
+			return None
+		else: return saves.DATA[propertyName]
+
+	def set(propertyName, propertyValue):
+		saves.DATA[propertyName] = propertyValue
+		## remember to call saves.write() after
+
+
 
 class database():
 	## simple json database wrapper
@@ -249,7 +306,7 @@ class query_object():
 	def __repr__(self):
 		## outputs anime search query results from MAL
 		if self.results == None: return "Empty query.."
-		o_str = "Query string: \n{}\n\n".format(self.actualquerystring)
+		o_str = "Query string: \n'{}'\n\n".format(self.actualquerystring)
 		i = 1
 		for node in self.results.data["data"]:
 			data = node["node"]
@@ -415,13 +472,54 @@ if __name__ == "__main__":
 	parser.add_argument("--debug", dest="toDebug", required=False, help="Run with debugging statements printed to output.", action="store_true")
 	args = parser.parse_args()
 
-	if args.i == None:
-		args.i = cmd.get_jsonfile_input("Exported AnimePlanet's file (include .json suffix): ")
-	if args.db == None:
-		args.db = cmd.get_jsonfile_input("Local database file (include .json suffix): ")
+	## set debug state at the very top
 	if args.toDebug:
 		## set debug_mode global state
 		States.DEBUG_MODE = True
+
+	## initialise saves object
+	saves.initialise()
+
+	exportedList = saves.get("exportedList") ## returns the absolute path to the exportedlist file, .json
+	localDatabase = saves.get("localDatabase") ## returns the absolute path to the local database file, .json
+	if exportedList == None:
+		saves.set("exportedList", "")
+		exportedList = "" ## default value
+	if localDatabase == None:
+		saves.set("localDatabase", "")
+		localDatabase = "" ## default value
+	saves.write() ## write saves
+
+	if args.i == None:
+		args.i = cmd.get_jsonfile_input("Exported AnimePlanet's file ({}): ".format(exportedList), required=exportedList == "", onempty=exportedList).replace("/", "\\")
+		## returns absolute path
+	if args.db == None:
+		args.db = cmd.get_jsonfile_input("Local database file ({}): ".format(localDatabase), required=localDatabase == "", onempty=localDatabase).replace("/", "\\")
+		## returns absolute path
+
+	if (sys.platform == "linux" and exportedList != args.i) or (sys.platform != "linux" and exportedList.lower() != args.i.lower()):
+		## linux file systems are case sensitive; unlike darwin and windows
+		## new input file given
+		choice = input("\nThe inputted AnimePlanet's export file is different from the previous session, save it as default file to use it in future sessions? (y/n): ").lower()
+		if choice == "y":
+			print("Saved export file as default.")
+			saves.set("exportedList", args.i)
+
+			## save preferences
+			saves.write()
+		else:
+			print("Did not save export file as default.")
+	if (sys.platform == "linux" and localDatabase != args.db) or (sys.platform != "linux" and localDatabase.lower() != args.db.lower()):
+		## new local database file given
+		choice = input("\nThe inputted local database file is different from the previous session, save it as default file to use it in future sessions? (y/n): ").lower()
+		if choice == "y":
+			print("Saved local database file as default.")
+			saves.set("localDatabase", args.db)
+
+			## save preferences
+			saves.write()
+		else:
+			print("Did not save local database file as default.")
 
 	actions.setup(args)
 	if args.m: ## with the --m flag, port straight away
