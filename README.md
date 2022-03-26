@@ -5,7 +5,7 @@
 
 ## 1.0 Features
 - Fast and gets the job done; built mainly for the sole purpose of porting over anime data from AnimePlanet's database to MyAnimeList's database.
-- Lightweight; only one third party dependancies is used - `requests`.
+- Lightweight; only two third party dependancies are used - `requests` and `python-dotenv`.
 - Simple to use; simply put in your exported list from AnimePlanet and it'd do wonders, though some human intervention may be needed.
 - Comes pre-packaged with a local database that will expand gradually over use since both sites have name discrepancies.
 
@@ -82,17 +82,13 @@ Name it whatever you want (needs to end with `.json` though), you'll be asked to
 Highly advise you to save it alongside the `.env` file, in the project folder, `AP_MALPorter`, if you're not too well-versed with directories.<br />
 
 ### Step 5: Install third-party dependenacies
-There is only one dependancy that this project requires as of so far.<br />
+There are only two dependancies that this project requires as of so far.<br />
 Check [this](https://github.com/FadedJayden/AP_MALPorter#21-dependencyies-used-in-this-project) section.<br />
-Simply run the command:<br />
-```
-pip install requests
-```
-**OR** if you know what you're doing, navigate to the cloned repo and run:
+<br />
+Navigate to the cloned repo and run:
 ```
 pip install -r requirements.txt
 ```
-Though the former should suffice.
 
 ### Step 6: Run the code
 You can either run the code with your terminal or by simply clicking on the `__main__.py` script in the project folder.<br />
@@ -134,6 +130,15 @@ And you're done!
 ## 2.1 Dependenc(y/ies) used in this project:
 **Here are a list of third party dependencies needed to be installed,**
 - [requests](https://pypi.org/project/requests/)
+- [python-dotenv](https://pypi.org/project/python-dotenv/)
+
+<br />
+
+Easy installation, simply by using the `requirements.txt` file in the repository.<br />
+
+```
+pip install -r requirements.txt
+```
 
 ## 2.2 Errors
 This section is to give you a guide on how to resolve thrown errors.<br />
