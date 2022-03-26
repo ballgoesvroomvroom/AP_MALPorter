@@ -3,7 +3,7 @@ A manual for a rather simple CLI.
 
 ## Arguments [when running]
 
-### --m/--mode
+### -m/--mode
 When this flag is shown, it will jump to porting straight away.
 Will further request for exported file and local database file if not inputted.
 `py AP_MALPorter --m`

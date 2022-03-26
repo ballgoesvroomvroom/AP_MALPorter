@@ -466,7 +466,7 @@ class actions():
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 
-	parser.add_argument("--m", "--mode", dest="m", required=False, help="Just run porting function, used with -i and -db", action="store_true")
+	parser.add_argument("-m", "--mode", dest="m", required=False, help="Just run porting function, used with -i and -db", action="store_true")
 	parser.add_argument("-i", "--input", dest="i", required=False, help="AnimePlanet's export list name with .json suffix.")
 	parser.add_argument("-db", "--database", dest="db", required=False, help="Local database file to use when matching anime name to their corresponding ID, .json file.")
 	parser.add_argument("--fast", dest="toWait", required=False, help="Run with fast mode enabled.", action="store_false") ## default .toWait is true
