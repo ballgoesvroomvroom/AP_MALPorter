@@ -526,7 +526,7 @@ if __name__ == "__main__":
 		actions.port(args.toWait)
 
 	else:
-		print("\nRefer to the manual: https://github.com/ballgoesvroomvroom/AP_MALPorter/blob/ef9d8a8a41d67a129a1df2bacc8df30b1784cacd/installation_guide/cli_manual/README.md") ## new line
+		print("\nRefer to the manual: https://github.com/ballgoesvroomvroom/AP_MALPorter/tree/main/installation_guide/cli_manual") ## new line
 
 		running = True
 		while running:
