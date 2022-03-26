@@ -98,10 +98,15 @@ Right now, I am under the assumption that the cloned project folder is stored in
 Using the `cd` command, navigate to the folder where the cloned project folder is stored.<br />
 (afaik, Windows, Linux, macOS uses the same command)<br />
 <br />
-Then run the follow command,
+Then run the follow command, (Windows)
 ```
 py AP_MALPorter
 ```
+**OR** if you're using linux
+```
+python AP_MALPorter
+```
+
 Supposing you didn't change the name of the folder and kept it as "AP_MALPorter".<br />
 Note:
 > Your working directory is the parent folder of the cloned project folder. In our case, `C:\Users\faded\Desktop`<br />

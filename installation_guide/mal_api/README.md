@@ -19,7 +19,7 @@ Select `non-commercial` in the `Commercial / Non-Commercial` dropdown.<br />
 Fill in the `Name / Company Name` field however your heart desires.<br />
 Setting `Purpose of Use` to `hobbyist` sounded the most logical to me.<br />
 <br />
-You may ignore the fields that are optional (denoted by a red asterisk).<br />
+You may ignore the fields that are optional (denoted by the absence of a red asterisk).<br />
 <br />
 Read through the `API License and Developer Agreement` ~your choice ლ(╹◡╹ლ).<br />
 You'd need to agree with it to move on, so.... its for the better good.<br />
