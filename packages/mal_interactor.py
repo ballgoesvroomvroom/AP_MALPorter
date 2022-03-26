@@ -119,6 +119,11 @@ def parsename(anime_name):
 		else:
 			new_s += c
 
+	if len(new_s) < 3:
+		## query string needs to be longer than or equals to 3 characters; limits imposed by MAL API
+		## pad query string with whitespace
+		new_s += " " *(3 -len(new_s))
+
 	return new_s[:64] ## ensure string does not exceed 64 characters else MAL API wont be happy
 
 def generate_codeverifier():
