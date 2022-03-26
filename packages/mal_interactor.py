@@ -30,6 +30,9 @@ class const():
 	STATE = "amistillintact"
 	MAXCONTENTSIZEUPONQUERY = 5 ## maximum amt of items to return when making a query
 
+	API_MIN_QUERYSTRING_LENGTH = 3
+	API_MAX_QUERYSTRING_LENGTH = 64
+
 	API_BASE = "https://api.myanimelist.net/v2/"
 	QUERYFIELD = "&fields=id,title,main_picture,alternative_titles,media_type,num_episodes"
 	SEARCHQUERYFIELD = "anime?q={}&limit={}&nsfw=true".format("{}", MAXCONTENTSIZEUPONQUERY)
@@ -119,12 +122,14 @@ def parsename(anime_name):
 		else:
 			new_s += c
 
-	if len(new_s) < 3:
+	l = len(new_s.replace(" ", "")) ## only count non-space characters
+	print(const.API_MIN_QUERYSTRING_LENGTH, type(const.API_MIN_QUERYSTRING_LENGTH))
+	if l < const.API_MIN_QUERYSTRING_LENGTH:
 		## query string needs to be longer than or equals to 3 characters; limits imposed by MAL API
-		## pad query string with whitespace
-		new_s += " " *(3 -len(new_s))
+		## repeat query string in order to fill required space
+		new_s *= 1 +int((const.API_MIN_QUERYSTRING_LENGTH -l) /l +0.5) ## round up; add 1 for initial add
 
-	return new_s[:64] ## ensure string does not exceed 64 characters else MAL API wont be happy
+	return new_s[:const.API_MAX_QUERYSTRING_LENGTH] ## ensure string does not exceed 64 characters else MAL API wont be happy
 
 def generate_codeverifier():
 	"""
@@ -281,7 +286,7 @@ def searchforanime(anime_name):
 	link = const.API_BASE +const.SEARCHQUERYFIELD.format(anime_name) +const.QUERYFIELD
 	re = obj.session.get(link)
 	if re.status_code != 200:
-		print(anime_name)
+		print("'{}'".format(anime_name))
 		print(link)
 		print(re.status_code, re.json())
 		raise MAL_Error("error code returned")

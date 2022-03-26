@@ -10,6 +10,7 @@ from packages import mal_interactor as mal
 from packages import commands as cmd
 
 dirname = os.path.dirname
+cwd = os.getcwd()
 
 o_repr = {
 	"invalid database file input": "Invalid database file input, \"{}\"",
@@ -493,9 +494,14 @@ if __name__ == "__main__":
 	if args.i == None:
 		args.i = cmd.get_jsonfile_input("Exported AnimePlanet's file ({}): ".format(exportedList), required=exportedList == "", onempty=exportedList).replace("/", "\\")
 		## returns absolute path
+	else:
+		## convert it to absolute path
+		args.i = os.path.join(cwd, args.i).replace("/", "\\")
 	if args.db == None:
 		args.db = cmd.get_jsonfile_input("Local database file ({}): ".format(localDatabase), required=localDatabase == "", onempty=localDatabase).replace("/", "\\")
 		## returns absolute path
+	else:
+		args.db = os.path.join(cwd, args.db).replace("/", "\\")
 
 	if (sys.platform == "linux" and exportedList != args.i) or (sys.platform != "linux" and exportedList.lower() != args.i.lower()):
 		## linux file systems are case sensitive; unlike darwin and windows
@@ -531,6 +537,7 @@ if __name__ == "__main__":
 		running = True
 		while running:
 			action = input("ap_malporter: ")
+			if action == "": continue
 
 			cmdname, input_args = cmd.getcommand(action)
 

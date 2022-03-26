@@ -73,6 +73,6 @@ def get_jsonfile_input(prompt_str, required=True, onempty=""):
 
 		re = is_json(i)
 		validating = not re
-		if validating: print("Invalid file name or file does not exists.\n")
+		if validating: print("Invalid file name or file does not exists.\nTrying to reference: {}\n".format(i))
 
 	return i
