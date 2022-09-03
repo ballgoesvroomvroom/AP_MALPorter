@@ -22,7 +22,7 @@
   - MAL entry had the two episodes bundled together as one show whereas AP had the two episodes separate.
   - Considered a caveat since the expected behaviour is to just map the two episodes (technically one show) from AP to the one MAL ID.
   - The status/ratings would be overrided for whichever is ported last.
-- If the anime name on AP consists lesser than 3 characters, it's name will be repeated in order to make it 3 characters long.
+- For querying anime data in MAL, due to restrictions imposed by its API, the anime name will be repeated if the name on AP consists lesser than 3 characters in order to make it 3 characters long.
   - Tried padding it with spaces (both with and w/o urlsafe encoding), didn't work.
   - Ineffective, may need to manually source the MAL ID.
 
